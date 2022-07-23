@@ -11,15 +11,19 @@ public class EntityController : MonoBehaviour
     protected float rotationAngle = 90;
 
     protected Rigidbody2D rb;
+    protected Gun gun;
 
     protected Vector2 moveInput;
 
     protected Vector2 velocity;
     protected float rotation;
 
+    public bool IsAlive { get; protected set; } = true;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        gun = GetComponentInChildren<Gun>();
     }
 
     protected void FixedUpdate()
@@ -32,5 +36,15 @@ public class EntityController : MonoBehaviour
     {
         float radAngle = angle * Mathf.Deg2Rad;
         return new Vector2(Mathf.Cos(radAngle), Mathf.Sin(radAngle));
+    }
+
+    protected void Kill()
+    {
+        IsAlive = false;
+    }
+
+    public void Revive()
+    {
+        IsAlive = true;
     }
 }
