@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : EntityController
+public class Enemy : CharacterController
 {
     public float distance;
 

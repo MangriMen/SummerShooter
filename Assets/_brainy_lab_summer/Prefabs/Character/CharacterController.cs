@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class EntityController : MonoBehaviour
+public class CharacterController : MonoBehaviour
 {
     [SerializeField]
     protected float speed = 2;

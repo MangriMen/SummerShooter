@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Utils;
 
-public class Player : EntityController
+public class Player : CharacterController
 {
     protected Vector2 moveInput;
 
