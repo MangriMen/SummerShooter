@@ -15,9 +15,16 @@ public class Gun : MonoBehaviour
 
     private float shotTimer;
 
+    private SpriteRenderer sr;
+
+    public Color Color
+    {
+        get => sr.color;
+    }
+
     void Start()
     {
-        bullet.GetComponent<SpriteRenderer>().color = GetComponent<SpriteRenderer>().color;
+        sr = GetComponent<SpriteRenderer>();
     }
 
     void Update()
@@ -32,8 +39,16 @@ public class Gun : MonoBehaviour
     {
         if (shotTimer <= 0)
         {
-            Instantiate(bullet, shotPoint.position, transform.rotation);
+            GameObject go = Instantiate(bullet, shotPoint.position, transform.rotation);
+            go.SendMessage("SetColor", Color);
+            go.SendMessage("SetOwner", transform.parent.gameObject);
+
             shotTimer = shotDelay;
         }
+    }
+
+    public void SetColor(Color color)
+    {
+        GetComponent<SpriteRenderer>().color = color;
     }
 }

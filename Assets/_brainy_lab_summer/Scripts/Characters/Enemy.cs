@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Enemy : EntityController
 {
-    public void TakeDamage()
+    public void TakeShot()
     {
         Kill();
     }

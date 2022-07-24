@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody2D))]
 public class EntityController : MonoBehaviour
 {
     [SerializeField]
@@ -13,29 +14,25 @@ public class EntityController : MonoBehaviour
     protected Rigidbody2D rb;
     protected Gun gun;
 
-    protected Vector2 moveInput;
-
     protected Vector2 velocity;
     protected float rotation;
 
     public bool IsAlive { get; protected set; } = true;
 
+    public string nickname;
+    public Color color;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         gun = GetComponentInChildren<Gun>();
+        gun.SendMessage("SetColor", color);
     }
 
     protected void FixedUpdate()
     {
         rb.MovePosition(rb.position + velocity * Time.fixedDeltaTime);
         rb.MoveRotation(rb.rotation + rotation * Time.fixedDeltaTime);
-    }
-
-    protected Vector2 GetVector2FromAngle(float angle)
-    {
-        float radAngle = angle * Mathf.Deg2Rad;
-        return new Vector2(Mathf.Cos(radAngle), Mathf.Sin(radAngle));
     }
 
     protected void Kill()

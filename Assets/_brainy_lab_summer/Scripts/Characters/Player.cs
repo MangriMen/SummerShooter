@@ -1,13 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Utils;
 
 public class Player : EntityController
 {
+    protected Vector2 moveInput;
+
     void Update()
     {
         moveInput =
-            GetVector2FromAngle(transform.rotation.eulerAngles.z) * Input.GetAxisRaw("Vertical");
+            Vector2Utils.FromAngle(transform.rotation.eulerAngles.z) * Input.GetAxisRaw("Vertical");
 
         velocity = moveInput * speed;
         rotation = -Input.GetAxisRaw("Horizontal") * rotationAngle;
@@ -18,7 +21,7 @@ public class Player : EntityController
         }
     }
 
-    public void TakeDamage()
+    public void TakeShot()
     {
         Kill();
     }

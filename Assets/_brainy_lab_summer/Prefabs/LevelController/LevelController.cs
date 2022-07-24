@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using Utils;
 
-public class Level : MonoBehaviour
+public class LevelController : MonoBehaviour
 {
     public Player player;
     public Enemy enemy;
@@ -27,6 +28,10 @@ public class Level : MonoBehaviour
     void Start()
     {
         restartTimer = restartDelay;
+
+        playerScore.color = player.color;
+        enemyScore.color = enemy.color;
+
         RestartRound();
     }
 
@@ -37,9 +42,6 @@ public class Level : MonoBehaviour
             if (restartTimer <= 0)
             {
                 RestartRound();
-                needToRestartRound = false;
-                restartTimer = restartDelay;
-                win.SetText("");
             }
             else
             {
@@ -52,8 +54,8 @@ public class Level : MonoBehaviour
             {
                 enemyScore.SetText((int.Parse(enemyScore.text.ToString()) + 1).ToString());
 
-                win.SetText("BLUE");
-                win.color = Color.blue;
+                win.SetText(enemy.nickname);
+                win.color = enemy.color;
 
                 needToRestartRound = true;
             }
@@ -62,8 +64,8 @@ public class Level : MonoBehaviour
             {
                 playerScore.SetText((int.Parse(playerScore.text.ToString()) + 1).ToString());
 
-                win.SetText("RED");
-                win.color = Color.red;
+                win.SetText(player.nickname);
+                win.color = player.color;
 
                 needToRestartRound = true;
             }
@@ -72,6 +74,19 @@ public class Level : MonoBehaviour
 
     void RestartRound()
     {
+        needToRestartRound = false;
+        restartTimer = restartDelay;
+        win.SetText("");
+
+        var objects = FindObjectsOfType(typeof(GameObject));
+        foreach (GameObject obj in objects)
+        {
+            if (obj.CompareTag("Bullet"))
+            {
+                Destroy(obj);
+            }
+        }
+
         player.Revive();
         enemy.Revive();
 
@@ -81,19 +96,13 @@ public class Level : MonoBehaviour
         player.transform.rotation = Quaternion.Euler(
             player.transform.rotation.eulerAngles.x,
             player.transform.rotation.eulerAngles.y,
-            GetLookAngle(enemy.transform, player.transform)
+            CommonUtils.GetLookAngle(enemy.transform, player.transform)
         );
 
         enemy.transform.rotation = Quaternion.Euler(
             enemy.transform.rotation.eulerAngles.x,
             enemy.transform.rotation.eulerAngles.y,
-            GetLookAngle(player.transform, enemy.transform)
+            CommonUtils.GetLookAngle(player.transform, enemy.transform)
         );
     }
-
-    public float GetLookAngle(Transform pointA, Transform pointB) =>
-        Mathf.Atan2(
-            pointA.transform.position.y - pointB.transform.position.y,
-            pointA.transform.position.x - pointB.transform.position.x
-        ) * Mathf.Rad2Deg;
 }
