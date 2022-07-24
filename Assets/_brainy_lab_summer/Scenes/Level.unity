@@ -379,6 +379,7 @@ MonoBehaviour:
   rotationAngle: 135
   nickname: Blue
   color: {r: 0.09803922, g: 0.4627451, b: 0.8235294, a: 1}
+  distance: 15
 --- !u!1001 &1872432975
 PrefabInstance:
   m_ObjectHideFlags: 0

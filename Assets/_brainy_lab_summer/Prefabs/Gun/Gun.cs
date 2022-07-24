@@ -7,8 +7,7 @@ public class Gun : MonoBehaviour
     [SerializeField]
     private GameObject bullet;
 
-    [SerializeField]
-    private Transform shotPoint;
+    public Transform shotPoint;
 
     [SerializeField]
     private float shotDelay;
