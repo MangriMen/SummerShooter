@@ -5,20 +5,22 @@ using Utils;
 
 public class Player : CharacterController
 {
-    protected Vector2 moveInput;
-
+    private float rotation;
     void Update()
     {
-        moveInput =
-            Vector2Utils.FromAngle(transform.rotation.eulerAngles.z) * Input.GetAxisRaw("Vertical");
-
-        velocity = moveInput * speed;
+        velocity = transform.right * Input.GetAxisRaw("Vertical") * speed;
         rotation = -Input.GetAxisRaw("Horizontal") * rotationAngle;
 
         if (Input.GetKey(KeyCode.Space))
         {
             gun.Shoot();
         }
+    }
+
+    new void FixedUpdate()
+    {
+        base.FixedUpdate();
+        rb.MoveRotation(rb.rotation * rotation * Time.deltaTime);
     }
 
     public void TakeShot()

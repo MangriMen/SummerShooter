@@ -15,7 +15,6 @@ public class CharacterController : MonoBehaviour
     protected Gun gun;
 
     protected Vector2 velocity;
-    protected float rotation;
 
     public bool IsAlive { get; protected set; } = true;
 
@@ -32,7 +31,6 @@ public class CharacterController : MonoBehaviour
     protected void FixedUpdate()
     {
         rb.MovePosition(rb.position + velocity * Time.fixedDeltaTime);
-        rb.MoveRotation(rb.rotation + rotation * Time.fixedDeltaTime);
     }
 
     protected void Kill()

@@ -96,13 +96,13 @@ public class LevelController : MonoBehaviour
         player.transform.rotation = Quaternion.Euler(
             player.transform.rotation.eulerAngles.x,
             player.transform.rotation.eulerAngles.y,
-            CommonUtils.GetLookAngle(enemy.transform, player.transform)
+            TransformUtils.Angle(enemy.transform, player.transform)
         );
 
         enemy.transform.rotation = Quaternion.Euler(
             enemy.transform.rotation.eulerAngles.x,
             enemy.transform.rotation.eulerAngles.y,
-            CommonUtils.GetLookAngle(player.transform, enemy.transform)
+            TransformUtils.Angle(player.transform, enemy.transform)
         );
     }
 }

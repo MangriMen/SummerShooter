@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class Gun : MonoBehaviour
@@ -34,16 +35,26 @@ public class Gun : MonoBehaviour
         }
     }
 
-    public void Shoot()
+    public async void Shoot(uint count = 1, float delay = 0)
     {
         if (shotTimer <= 0)
         {
-            GameObject go = Instantiate(bullet, shotPoint.position, transform.rotation);
-            go.SendMessage("SetColor", Color);
-            go.SendMessage("SetOwner", transform.parent.gameObject);
+            for (uint i = 0; i < count; i++)
+            {
+                CreateBullet();
+                await Task.Delay((int)(delay * 1000));
+            }
 
             shotTimer = shotDelay;
         }
+    }
+
+    private GameObject CreateBullet()
+    {
+        GameObject go = Instantiate(bullet, shotPoint.position, transform.rotation);
+        go.SendMessage("SetColor", Color);
+        go.SendMessage("SetOwner", transform.parent.gameObject);
+        return go;
     }
 
     public void SetColor(Color color)

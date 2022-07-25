@@ -13,9 +13,9 @@ namespace Utils
         }
     }
 
-    public static class CommonUtils
+    public static class TransformUtils
     {
-        public static float GetLookAngle(Transform pointA, Transform pointB) =>
+        public static float Angle(Transform pointA, Transform pointB) =>
             Mathf.Atan2(
                 pointA.transform.position.y - pointB.transform.position.y,
                 pointA.transform.position.x - pointB.transform.position.x

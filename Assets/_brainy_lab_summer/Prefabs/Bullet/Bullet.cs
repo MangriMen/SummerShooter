@@ -22,7 +22,7 @@ public class Bullet : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
 
-        velocity = Vector2Utils.FromAngle(transform.rotation.eulerAngles.z + 90) * speed;
+        velocity = transform.up * speed;
     }
 
     private void FixedUpdate()
