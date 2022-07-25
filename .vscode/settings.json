@@ -1,0 +1,20 @@
+{
+  "files.exclude": {
+    "**/*.csproj": true,
+    "**/*.meta": true,
+    "**/*.prefab": true,
+    "**/*.sln": true,
+    "**/*.unity": true,
+    "**/Library": true,
+    "**/LICENSE": true,
+    "**/Logs": true,
+    "**/obj": true,
+    "**/Packages": true,
+    "**/ProjectSettings": true,
+    "**/Scenes": true,
+    "**/StreamingAssets": true,
+    "**/Temp": true,
+    "**/TextMesh Pro": true,
+    "**/UserSettings": true
+  }
+}
