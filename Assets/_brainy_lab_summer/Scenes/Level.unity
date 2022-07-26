@@ -470,7 +470,7 @@ MonoBehaviour:
   distance: 5
   levelController: {fileID: 1866284289}
   pathUpdateDelay: 0.5
-  drawPath: 1
+  drawPath: 0
 --- !u!114 &929688923 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2878922108301910435, guid: 268ba4ab80d4f264db9f6bf5dc5c1a06, type: 3}

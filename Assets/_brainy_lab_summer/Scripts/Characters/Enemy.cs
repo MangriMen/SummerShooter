@@ -49,6 +49,7 @@ public class Enemy : CharacterController
     {
         if (CheckPlayer())
         {
+            velocity = Vector2.zero;
             rotation = TransformUtils.Angle(levelController.player.transform, transform);
             TryToShoot();
         }
