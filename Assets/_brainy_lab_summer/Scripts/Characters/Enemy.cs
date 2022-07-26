@@ -82,12 +82,15 @@ public class Enemy : CharacterController
     {
         if (pathUpdateTimer < 0 || currentPointIndex == -1)
         {
-            currentPath = pathfinder.FindPath(
-                transform.position,
-                levelController.player.transform.position, gameObject);
+            if (pathfinder != null)
+            {
+                currentPath = pathfinder.FindPath(
+                    transform.position,
+                    levelController.player.transform.position, gameObject);
 
-            currentPointIndex = 0;
-            pathUpdateTimer = pathUpdateDelay;
+                currentPointIndex = 0;
+                pathUpdateTimer = pathUpdateDelay;
+            }
         }
     }
 
