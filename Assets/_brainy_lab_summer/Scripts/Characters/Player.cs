@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Utils;
 
 public class Player : CharacterController
 {
@@ -20,7 +19,7 @@ public class Player : CharacterController
     new void FixedUpdate()
     {
         base.FixedUpdate();
-        rb.MoveRotation(rb.rotation * rotation * Time.deltaTime);
+        rb.MoveRotation(rb.rotation + rotation * Time.deltaTime);
     }
 
     public void TakeShot()

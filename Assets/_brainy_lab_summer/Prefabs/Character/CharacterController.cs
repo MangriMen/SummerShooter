@@ -21,7 +21,7 @@ public class CharacterController : MonoBehaviour
     public string nickname;
     public Color color;
 
-    void Start()
+    protected void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         gun = GetComponentInChildren<Gun>();

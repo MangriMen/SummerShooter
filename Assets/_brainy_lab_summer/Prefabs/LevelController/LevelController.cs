@@ -25,6 +25,8 @@ public class LevelController : MonoBehaviour
     private float restartDelay = 2;
     private float restartTimer;
 
+    public AINavMeshGenerator enemyPathMesh;
+
     void Start()
     {
         restartTimer = restartDelay;
