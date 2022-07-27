@@ -31,9 +31,6 @@ public class LevelController : MonoBehaviour
     private bool _needToRestartRound;
     private float _roundRestartTimer;
 
-    public Player Player { get => _player; }
-    public Enemy Enemy { get => _enemy; }
-
     void Start()
     {
         _playerScore.color = _player.Color;

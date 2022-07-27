@@ -4,7 +4,7 @@ using Utils;
 public class Enemy : CharacterController
 {
     [SerializeField]
-    private LevelController _levelController;
+    private Player _player;
 
     [SerializeField]
     private AINavMeshGenerator _enemyPathMesh;
@@ -42,7 +42,7 @@ public class Enemy : CharacterController
         if (CheckPlayerIsVisible())
         {
             _velocity = Vector2.zero;
-            _rotation = AngleUtils.Angle(transform, _levelController.Player.transform);
+            _rotation = AngleUtils.Angle(transform, _player.transform);
             Shoot();
         }
         else
@@ -111,7 +111,7 @@ public class Enemy : CharacterController
         {
             _currentPath = _pathfinder.FindPath(
                 transform.position,
-                _levelController.Player.transform.position, gameObject);
+                _player.transform.position, gameObject);
 
             _currentPathPointIndex = 0;
             _pathUpdateTimer = _pathUpdatePeriod;
