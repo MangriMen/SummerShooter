@@ -148,16 +148,16 @@ public class Enemy : CharacterController
             else
             {
                 var needRotation = AngleUtils.Angle(transform.position, _currentPath[_currentPathPointIndex]);
-                var angleDiff = Mathf.Abs(needRotation - _rb.rotation);
+                var angleDiff = Mathf.Abs(needRotation - _rb.rotation) % 360;
 
-                if (angleDiff.IsBetweenRange(1, 359) || angleDiff > 361)
+                if (angleDiff.IsBetweenRange(30, 330))
                 {
                     _rotation = needRotation;
-                    _velocity = Vector2.zero;
+                    _velocity = transform.right.normalized * _speed / 4;
                 }
                 else
                 {
-                    _velocity = transform.right * _speed;
+                    _velocity = transform.right.normalized * _speed;
                 }
             }
         }

@@ -762,6 +762,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1767862803885833461, guid: 313d765f42e521b4aa68839cc1cbe2f9, type: 3}
+      propertyPath: m_Interpolate
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4476367479048570721, guid: 313d765f42e521b4aa68839cc1cbe2f9, type: 3}
       propertyPath: shotDelay
       value: 1
