@@ -845,7 +845,7 @@ MonoBehaviour:
   _rotationSpeed: 135
   _name: blue
   _color: {r: 0.09803922, g: 0.4627451, b: 0.8235294, a: 1}
-  _levelController: {fileID: 1866284289}
+  _player: {fileID: 1075572720}
   _enemyPathMesh: {fileID: 210236382}
   _pathUpdatePeriod: 1
   drawPath: 0
@@ -1351,17 +1351,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1744819628}
   m_CullTransparentMesh: 1
---- !u!114 &1866284289 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 805460940034232019, guid: 63eef0933e84a724e9dd289412028ed0, type: 3}
-  m_PrefabInstance: {fileID: 805460939801216403}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 37b72811126f61849b7868ec4a3f202e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1884792885
 GameObject:
   m_ObjectHideFlags: 0
