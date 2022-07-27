@@ -7,6 +7,9 @@ public class Enemy : CharacterController
     private LevelController _levelController;
 
     [SerializeField]
+    private AINavMeshGenerator _enemyPathMesh;
+
+    [SerializeField]
     private float _pathUpdatePeriod = 1f;
 
     [SerializeField]
@@ -28,7 +31,7 @@ public class Enemy : CharacterController
 
         gameObject.AddComponent<LineRenderer>();
         _lr = GetComponent<LineRenderer>();
-        _pathfinder = new(_levelController.EnemyPathMesh);
+        _pathfinder = new(_enemyPathMesh);
 
         ConfigurePathDrawer();
         Revive();

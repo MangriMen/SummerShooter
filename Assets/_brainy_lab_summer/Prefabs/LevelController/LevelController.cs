@@ -23,9 +23,6 @@ public class LevelController : MonoBehaviour
     private TextMeshProUGUI _enemyScore;
 
     [SerializeField]
-    private AINavMeshGenerator _enemyPathMesh;
-
-    [SerializeField]
     private TextMeshProUGUI _winText;
 
     [SerializeField]
@@ -36,7 +33,6 @@ public class LevelController : MonoBehaviour
 
     public Player Player { get => _player; }
     public Enemy Enemy { get => _enemy; }
-    public AINavMeshGenerator EnemyPathMesh { get => _enemyPathMesh; }
 
     void Start()
     {
