@@ -11,14 +11,17 @@ public class Player : CharacterController
 
     private float _rotation;
 
-    private float moveCheckDelay = 0.1f;
-    private float moveCheckTimer = 0.1f;
+    private float moveForwardCheckDelay = 0.1f;
+    private float moveForwardCheckTimer = 0.1f;
+
+    private float moveSidewaysCheckDelay = 0.1f;
+    private float moveSidewaysCheckTimer = 0.1f;
 
     private float rotationCheckDelay = 0.4f;
     private float rotationCheckTimer = 0.4f;
 
-    private float shootCheckDelay = 0.5f;
-    private float shootCheckTimer = 0.5f;
+    private float shotCheckDelay = 0.5f;
+    private float shotCheckTimer = 0.5f;
 
     void Update()
     {
@@ -31,12 +34,12 @@ public class Player : CharacterController
 
             CheckAction();
 
-            shootCheckTimer = shootCheckDelay;
+            shotCheckTimer = shotCheckDelay;
         }
 
         if (Input.GetAxisRaw("Vertical") != 0)
         {
-            moveCheckTimer = moveCheckDelay;
+            moveForwardCheckTimer = moveForwardCheckDelay;
         }
 
         if (Input.GetAxisRaw("Horizontal") != 0)
@@ -44,9 +47,18 @@ public class Player : CharacterController
             rotationCheckTimer = rotationCheckDelay;
         }
 
-        if (moveCheckTimer > 0)
+        if (Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.E))
         {
-            moveCheckTimer -= Time.deltaTime;
+            _velocity = (transform.right * Input.GetAxisRaw("Vertical")) + (transform.up * GetSidewayMovementDirection());
+            _velocity = _velocity.normalized * _speed;
+            // _velocity = new Vector2( Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+
+            moveSidewaysCheckTimer = moveSidewaysCheckDelay;
+        }
+
+        if (moveForwardCheckTimer > 0)
+        {
+            moveForwardCheckTimer -= Time.deltaTime;
         }
 
         if (rotationCheckTimer > 0)
@@ -54,9 +66,9 @@ public class Player : CharacterController
             rotationCheckTimer -= Time.deltaTime;
         }
 
-        if (shootCheckTimer > 0)
+        if (shotCheckTimer > 0)
         {
-            shootCheckTimer -= Time.deltaTime;
+            shotCheckTimer -= Time.deltaTime;
         }
     }
 
@@ -71,25 +83,51 @@ public class Player : CharacterController
         Kill();
     }
 
+    int GetSidewayMovementDirection()
+    {
+        if (Input.GetKey(KeyCode.Q))
+        {
+            return 1;
+        }
+        else if (Input.GetKey(KeyCode.E))
+        {
+            return -1;
+        }
+
+        return 0;
+    }
+
     void CheckAction()
     {
-        if (moveCheckTimer > 0 && shootCheckTimer > 0)
+        if (moveForwardCheckTimer > 0 && rotationCheckTimer > 0 && shotCheckTimer > 0)
+        {
+            AppendAction("Movement, rotation and shot");
+        }
+        else if (moveSidewaysCheckTimer > 0 && shotCheckTimer > 0)
+        {
+            AppendAction("Sideways movement and double shot");
+        }
+        else if (moveForwardCheckTimer > 0 && shotCheckTimer > 0)
         {
             AppendAction("Movement and double shot");
         }
-        else if (rotationCheckTimer > 0 && shootCheckTimer > 0)
+        else if (rotationCheckTimer > 0 && shotCheckTimer > 0)
         {
             AppendAction("Rotation and double shot");
+        }
+        else if (moveForwardCheckTimer > 0)
+        {
+            AppendAction("Movement and shot");
         }
         else if (rotationCheckTimer > 0)
         {
             AppendAction("Rotation and shot");
         }
-        else if (moveCheckTimer > 0)
+        else if (moveSidewaysCheckTimer > 0)
         {
-            AppendAction("Movement and shot");
+            AppendAction("Sideways movement and shot");
         }
-        else if (shootCheckTimer > 0)
+        else if (shotCheckTimer > 0)
         {
             AppendAction("Double shot");
         }
