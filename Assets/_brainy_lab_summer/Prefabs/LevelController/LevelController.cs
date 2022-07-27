@@ -1,110 +1,122 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using Utils;
 
 public class LevelController : MonoBehaviour
 {
-    public Player player;
-    public Enemy enemy;
-
-    public TextMeshProUGUI playerScore;
-    public TextMeshProUGUI enemyScore;
-    public TextMeshProUGUI win;
+    [SerializeField]
+    private Player _player;
 
     [SerializeField]
-    Transform playerStartPos;
+    private Transform _playerStartPos;
 
     [SerializeField]
-    Transform enemyStartPos;
-
-    private bool needToRestartRound;
+    private TextMeshProUGUI _playerScore;
 
     [SerializeField]
-    private float restartDelay = 2;
-    private float restartTimer;
+    private Enemy _enemy;
 
-    public AINavMeshGenerator enemyPathMesh;
+    [SerializeField]
+    private Transform _enemyStartPos;
+
+    [SerializeField]
+    private TextMeshProUGUI _enemyScore;
+
+    [SerializeField]
+    private AINavMeshGenerator _enemyPathMesh;
+
+    [SerializeField]
+    private TextMeshProUGUI _winText;
+
+    [SerializeField]
+    private float _roundRestartDelay = 2;
+
+    private bool _needToRestartRound;
+    private float _roundRestartTimer;
+
+    public Player Player { get => _player; }
+    public Enemy Enemy { get => _enemy; }
+    public AINavMeshGenerator EnemyPathMesh { get => _enemyPathMesh; }
 
     void Start()
     {
-        restartTimer = restartDelay;
-
-        playerScore.color = player.color;
-        enemyScore.color = enemy.color;
+        _playerScore.color = _player.Color;
+        _enemyScore.color = _enemy.Color;
 
         RestartRound();
     }
 
     void Update()
     {
-        if (needToRestartRound)
+        if (_needToRestartRound)
         {
-            if (restartTimer <= 0)
+            if (_roundRestartTimer <= 0)
             {
                 RestartRound();
             }
             else
             {
-                restartTimer -= Time.deltaTime;
+                _roundRestartTimer -= Time.deltaTime;
             }
         }
         else
         {
-            if (!player.IsAlive)
+            if (!_player.IsAlive)
             {
-                enemyScore.SetText((int.Parse(enemyScore.text.ToString()) + 1).ToString());
-
-                win.SetText(enemy.nickname);
-                win.color = enemy.color;
-
-                needToRestartRound = true;
+                SetWin(_enemy, _enemyScore);
             }
-
-            if (!enemy.IsAlive)
+            else if (!_enemy.IsAlive)
             {
-                playerScore.SetText((int.Parse(playerScore.text.ToString()) + 1).ToString());
-
-                win.SetText(player.nickname);
-                win.color = player.color;
-
-                needToRestartRound = true;
+                SetWin(_player, _playerScore);
             }
         }
     }
 
+    void SetWin(CharacterController winningCharacter, TextMeshProUGUI score)
+    {
+        score.SetText((int.Parse(score.text.ToString()) + 1).ToString());
+
+        _winText.SetText(winningCharacter.Name);
+        _winText.color = winningCharacter.Color;
+
+        _needToRestartRound = true;
+    }
+
     void RestartRound()
     {
-        needToRestartRound = false;
-        restartTimer = restartDelay;
-        win.SetText("");
+        ResetVariables();
 
+        DestroyAllObjectsOnScene("Bullet");
+
+        ResetCharacter(_player, _playerStartPos);
+        ResetCharacter(_enemy, _enemyStartPos);
+    }
+
+    void ResetVariables()
+    {
+        _winText.SetText("");
+        _roundRestartTimer = _roundRestartDelay;
+        _needToRestartRound = false;
+    }
+
+    void ResetCharacter(CharacterController character, Transform startPosition)
+    {
+        character.Revive();
+        character.transform.position = startPosition.transform.position;
+        character.transform.rotation = Quaternion.Euler(0, 0, AngleUtils.AngleToDirectionAngle(
+            AngleUtils.Angle(character.transform.position, new Vector2(0, 0)))
+            );
+    }
+
+    void DestroyAllObjectsOnScene(string tag)
+    {
         var objects = FindObjectsOfType(typeof(GameObject));
         foreach (GameObject obj in objects)
         {
-            if (obj.CompareTag("Bullet"))
+            if (obj.CompareTag(tag))
             {
                 Destroy(obj);
             }
         }
-
-        player.Revive();
-        enemy.Revive();
-
-        player.transform.position = playerStartPos.transform.position;
-        enemy.transform.position = enemyStartPos.transform.position;
-
-        player.transform.rotation = Quaternion.Euler(
-            player.transform.rotation.eulerAngles.x,
-            player.transform.rotation.eulerAngles.y,
-            TransformUtils.Angle(enemy.transform, player.transform)
-        );
-
-        enemy.transform.rotation = Quaternion.Euler(
-            enemy.transform.rotation.eulerAngles.x,
-            enemy.transform.rotation.eulerAngles.y,
-            TransformUtils.Angle(player.transform, enemy.transform)
-        );
     }
 }

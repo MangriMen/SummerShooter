@@ -1,36 +1,40 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Collider2D))]
 public class CharacterController : MonoBehaviour
 {
     [SerializeField]
-    protected float speed = 2;
+    protected float _speed = 2;
 
     [SerializeField]
-    protected float rotationAngle = 90;
+    protected float _rotationSpeed = 90;
 
-    protected Rigidbody2D rb;
-    protected Gun gun;
+    [SerializeField]
+    protected string _name;
 
-    protected Vector2 velocity;
+    [SerializeField]
+    protected Color _color;
 
+    protected Rigidbody2D _rb;
+    protected Gun _gun;
+    protected Vector2 _velocity;
+
+    public string Name { get => _name; protected set => _name = value; }
+    public Color Color { get => _color; protected set => _color = value; }
     public bool IsAlive { get; protected set; } = true;
-
-    public string nickname;
-    public Color color;
 
     protected void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
-        gun = GetComponentInChildren<Gun>();
-        gun.SendMessage("SetColor", color);
+        _rb = GetComponent<Rigidbody2D>();
+        _gun = GetComponentInChildren<Gun>();
+
+        _gun.SetColor(_color);
     }
 
     protected void FixedUpdate()
     {
-        rb.MovePosition(rb.position + velocity * Time.fixedDeltaTime);
+        _rb.MovePosition(_rb.position + _velocity * Time.fixedDeltaTime);
     }
 
     protected void Kill()

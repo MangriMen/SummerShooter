@@ -1,43 +1,33 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
 public class Gun : MonoBehaviour
 {
     [SerializeField]
-    private GameObject bullet;
-
-    public Transform shotPoint;
+    private GameObject _bullet;
 
     [SerializeField]
-    private float shotDelay;
+    private Transform _shotPoint;
 
-    private float shotTimer;
+    [SerializeField]
+    private float _shotDelay;
 
-    private SpriteRenderer sr;
+    private float _shotTimer;
 
-    public Color Color
-    {
-        get => sr.color;
-    }
-
-    void Start()
-    {
-        sr = GetComponent<SpriteRenderer>();
-    }
+    public Transform ShotPoint { get => _shotPoint; }
+    public Color Color { get => GetComponent<SpriteRenderer>().color; }
 
     void Update()
     {
-        if (shotTimer > 0)
+        if (_shotTimer > 0)
         {
-            shotTimer -= Time.deltaTime;
+            _shotTimer -= Time.deltaTime;
         }
     }
 
     public async void Shoot(uint count = 1, float delay = 0)
     {
-        if (shotTimer <= 0)
+        if (_shotTimer <= 0)
         {
             for (uint i = 0; i < count; i++)
             {
@@ -45,13 +35,13 @@ public class Gun : MonoBehaviour
                 await Task.Delay((int)(delay * 1000));
             }
 
-            shotTimer = shotDelay;
+            _shotTimer = _shotDelay;
         }
     }
 
     private GameObject CreateBullet()
     {
-        GameObject go = Instantiate(bullet, shotPoint.position, transform.rotation);
+        GameObject go = Instantiate(_bullet, _shotPoint.position, transform.rotation);
         go.SendMessage("SetColor", Color);
         go.SendMessage("SetOwner", transform.parent.gameObject);
         return go;

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Utils
@@ -13,25 +11,51 @@ namespace Utils
         }
     }
 
-    public static class TransformUtils
+    public static class AngleUtils
     {
-        public static float Angle(Transform pointA, Transform pointB) =>
+        public static float Angle(Transform from, Transform to) =>
             Mathf.Atan2(
-                pointA.transform.position.y - pointB.transform.position.y,
-                pointA.transform.position.x - pointB.transform.position.x
+                to.transform.position.y - from.transform.position.y,
+                to.transform.position.x - from.transform.position.x
             ) * Mathf.Rad2Deg;
 
-        public static float Angle(Vector2 pointA, Vector2 pointB) =>
+        public static float Angle(Vector2 from, Vector2 to) =>
             Mathf.Atan2(
-                pointA.y - pointB.y,
-                pointA.x - pointB.x
+                to.y - from.y,
+                to.x - from.x
             ) * Mathf.Rad2Deg;
+
+        public static float AngleToDirectionAngle(float angle)
+        {
+            float normalizedAngle = (angle < 0 ? angle + 360 : angle) % 360;
+
+            if (normalizedAngle.IsBetweenRange(46, 135))
+            {
+                return 90;
+            }
+            else if (normalizedAngle.IsBetweenRange(136, 225))
+            {
+                return 180;
+
+            }
+            else if (normalizedAngle.IsBetweenRange(226, 315))
+            {
+                return 270;
+
+            }
+            else if (normalizedAngle.IsBetweenRange(316, 0) || normalizedAngle.IsBetweenRange(0, 45))
+            {
+                return 0;
+            }
+
+            return 0;
+        }
     }
     public static class MathExtension
     {
-        public static bool IsBetweenRange(this float thisValue, float value1, float value2)
+        public static bool IsBetweenRange(this float value, float value1, float value2)
         {
-            return thisValue >= Mathf.Min(value1, value2) && thisValue <= Mathf.Max(value1, value2);
+            return value >= Mathf.Min(value1, value2) && value <= Mathf.Max(value1, value2);
         }
     }
 }

@@ -1,28 +1,27 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : CharacterController
 {
-    private float rotation;
+    private float _rotation;
+
     void Update()
     {
-        velocity = transform.right * Input.GetAxisRaw("Vertical") * speed;
-        rotation = -Input.GetAxisRaw("Horizontal") * rotationAngle;
+        _velocity = transform.right * Input.GetAxisRaw("Vertical") * _speed;
+        _rotation = -Input.GetAxisRaw("Horizontal") * _rotationSpeed;
 
-        if (Input.GetKey(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            gun.Shoot();
+            _gun.Shoot();
         }
     }
 
     new void FixedUpdate()
     {
         base.FixedUpdate();
-        rb.MoveRotation(rb.rotation + rotation * Time.deltaTime);
+        _rb.MoveRotation(_rb.rotation + _rotation * Time.deltaTime);
     }
 
-    public void TakeShot()
+    public void GetShot()
     {
         Kill();
     }

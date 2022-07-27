@@ -1,59 +1,51 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using Utils;
 
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Collider2D))]
+[RequireComponent(typeof(SpriteRenderer))]
 public class Bullet : MonoBehaviour
 {
     [SerializeField]
-    private float speed;
+    private float _speed;
 
-    [SerializeField]
-    private float distance;
+    private Rigidbody2D _rb;
+    private GameObject _owner;
+    private Vector2 _velocity;
 
-    protected Rigidbody2D rb;
-
-    protected Vector2 velocity;
-
-    protected GameObject owner;
-
-    private void Start()
+    void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
+        _rb = GetComponent<Rigidbody2D>();
 
-        velocity = transform.up * speed;
+        _velocity = transform.up * _speed;
     }
 
-    private void FixedUpdate()
+    void FixedUpdate()
     {
-        rb.MovePosition(rb.position + velocity * Time.fixedDeltaTime);
+        _rb.MovePosition(_rb.position + _velocity * Time.fixedDeltaTime);
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject == owner)
+        if (collision.gameObject == _owner)
         {
             return;
         }
 
         if (collision.gameObject.CompareTag("Enemy"))
         {
-            collision.collider.GetComponent<Enemy>().TakeShot();
+            collision.collider.GetComponent<Enemy>().GetShot();
             Destroy(gameObject);
         }
         else if (collision.gameObject.CompareTag("Player"))
         {
-            collision.collider.GetComponent<Player>().TakeShot();
+            collision.collider.GetComponent<Player>().GetShot();
             Destroy(gameObject);
         }
         else if (collision.gameObject.CompareTag("Obstacle"))
         {
             Vector2 wallNormal = collision.contacts[0].normal;
-
-            Vector2 newDirection = Vector2.Reflect(velocity, wallNormal).normalized;
-
-            velocity = newDirection * speed;
+            Vector2 newDirection = Vector2.Reflect(_velocity, wallNormal).normalized;
+            _velocity = newDirection * _speed;
         }
     }
 
@@ -69,6 +61,6 @@ public class Bullet : MonoBehaviour
 
     public void SetOwner(GameObject gameObject)
     {
-        owner = gameObject;
+        _owner = gameObject;
     }
 }
