@@ -34,7 +34,7 @@ public class Player : CharacterController
             shootCheckTimer = shootCheckDelay;
         }
 
-        if (Input.GetAxisRaw("Vertical") > 0 || Input.GetAxisRaw("Vertical") < 0)
+        if (Input.GetAxisRaw("Vertical") != 0)
         {
             moveCheckTimer = moveCheckDelay;
         }
