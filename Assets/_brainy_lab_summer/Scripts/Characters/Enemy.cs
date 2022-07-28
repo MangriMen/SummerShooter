@@ -1,16 +1,14 @@
 using UnityEngine;
+using UnityEngine.AI;
 using Utils;
 
 public class Enemy : CharacterController
 {
     [SerializeField]
+    private LayerMask _lookLayer;
+
+    [SerializeField]
     private Player _player;
-
-    [SerializeField]
-    private AINavMeshGenerator _enemyPathMesh;
-
-    [SerializeField]
-    private float _pathUpdatePeriod = 1f;
 
     [SerializeField]
     private bool drawPath;
@@ -24,44 +22,45 @@ public class Enemy : CharacterController
     [SerializeField]
     private bool drawLook;
 
+    private NavMeshAgent _agent;
+
     private LineRenderer _lookRenderer;
     private LineRenderer _pathRenderer;
-    private Pathfinder _pathfinder;
-    private Vector2[] _currentPath;
-    private int _currentPathPointIndex = -1;
-    private float _pathUpdateTimer;
     private float _rotation;
 
     new void Start()
     {
         base.Start();
 
+        _agent = GetComponent<NavMeshAgent>();
+        _agent.updateRotation = false;
+        _agent.updateUpAxis = false;
+
         _pathRenderer = CreateAndConfigureLineRenderer("Path Renderer", _color);
         _lookRenderer = CreateAndConfigureLineRenderer("Look Renderer", Color.red, 0.05f);
-
-        _pathfinder = new(_enemyPathMesh);
 
         Revive();
     }
 
     void Update()
     {
+        if (Vector2.Distance(transform.position, _player.transform.position) <= _agent.stoppingDistance)
+        {
+            _rotation = AngleUtils.Angle(transform, _player.transform);
+        }
+
         if (CheckPlayerIsVisible())
         {
-            _velocity = Vector2.zero;
             _rotation = AngleUtils.Angle(transform, _player.transform);
+
             Shoot();
         }
         else
         {
-            UpdatePathIfNeed();
-            DrawCurrentPath();
-            MoveToNextPathPoint();
-        }
+            _agent.SetDestination(_player.transform.position);
+            _rotation = Vector2.SignedAngle(Vector2.right, _agent.velocity);
 
-        if (_pathUpdateTimer > 0)
-        {
-            _pathUpdateTimer -= Time.deltaTime;
+            DrawCurrentPath();
         }
     }
 
@@ -79,13 +78,7 @@ public class Enemy : CharacterController
     void OnDestroy()
     {
         Destroy(_pathRenderer.material);
-    }
-
-    new void Revive()
-    {
-        base.Revive();
-        _currentPathPointIndex = -1;
-        _pathUpdateTimer = _pathUpdatePeriod;
+        Destroy(_lookRenderer.material);
     }
 
     LineRenderer CreateAndConfigureLineRenderer(string objectName, Color color, float width = 0.2f)
@@ -125,7 +118,8 @@ public class Enemy : CharacterController
             var hitInfo = Physics2D.Raycast(
                 position,
                 direction,
-                distance
+                distance,
+                _lookLayer
             );
 
             if (drawLook)
@@ -136,7 +130,6 @@ public class Enemy : CharacterController
 
             if (hitInfo.collider != null)
             {
-
                 if (hitInfo.collider.CompareTag("Obstacle"))
                 {
                     position = hitInfo.point;
@@ -154,60 +147,14 @@ public class Enemy : CharacterController
         return false;
     }
 
-    void UpdatePathIfNeed()
-    {
-        if (_pathUpdateTimer < 0 || _currentPathPointIndex == -1)
-        {
-            _currentPath = _pathfinder.FindPath(
-                transform.position,
-                _player.transform.position, gameObject);
-
-            _currentPathPointIndex = 0;
-            _pathUpdateTimer = _pathUpdatePeriod;
-        }
-    }
-
     void DrawCurrentPath()
     {
-        if (_currentPath != null && drawPath)
+        if (drawPath)
         {
-            _pathRenderer.positionCount = _currentPath.Length;
-            for (int i = 0; i < _currentPath.Length; i++)
+            _pathRenderer.positionCount = _agent.path.corners.Length;
+            for (int i = 0; i < _agent.path.corners.Length; i++)
             {
-                _pathRenderer.SetPosition(i, _currentPath[i]);
-            }
-        }
-    }
-
-    void MoveToNextPathPoint()
-    {
-        if (_currentPath != null)
-        {
-            if (_currentPathPointIndex >= _currentPath.Length - 1)
-            {
-                _currentPathPointIndex = -1;
-                return;
-            }
-
-            if (Vector2.Distance(transform.position, _currentPath[_currentPathPointIndex]) < 0.5f)
-            {
-                _velocity = Vector2.zero;
-                _currentPathPointIndex++;
-            }
-            else
-            {
-                var needRotation = AngleUtils.Angle(transform.position, _currentPath[_currentPathPointIndex]);
-                var angleDiff = Mathf.Abs(needRotation - _rb.rotation) % 360;
-
-                if (angleDiff.IsBetweenRange(30, 330))
-                {
-                    _rotation = needRotation;
-                    _velocity = transform.right.normalized * _speed / 4;
-                }
-                else
-                {
-                    _velocity = transform.right.normalized * _speed;
-                }
+                _pathRenderer.SetPosition(i, _agent.path.corners[i]);
             }
         }
     }
