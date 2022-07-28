@@ -13,12 +13,19 @@ public class Enemy : CharacterController
     private float _pathUpdatePeriod = 1f;
 
     [SerializeField]
-    bool drawPath;
+    private bool drawPath;
 
     [SerializeField]
     private float _shotDistance;
 
-    private LineRenderer _lr;
+    [SerializeField]
+    private uint _playerCheckReflectionsCount = 3;
+
+    [SerializeField]
+    private bool drawLook;
+
+    private LineRenderer _lookRenderer;
+    private LineRenderer _pathRenderer;
     private Pathfinder _pathfinder;
     private Vector2[] _currentPath;
     private int _currentPathPointIndex = -1;
@@ -29,11 +36,11 @@ public class Enemy : CharacterController
     {
         base.Start();
 
-        gameObject.AddComponent<LineRenderer>();
-        _lr = GetComponent<LineRenderer>();
+        _pathRenderer = CreateAndConfigureLineRenderer("Path Renderer", _color);
+        _lookRenderer = CreateAndConfigureLineRenderer("Look Renderer", Color.red, 0.05f);
+
         _pathfinder = new(_enemyPathMesh);
 
-        ConfigurePathDrawer();
         Revive();
     }
 
@@ -71,7 +78,7 @@ public class Enemy : CharacterController
 
     void OnDestroy()
     {
-        Destroy(_lr.material);
+        Destroy(_pathRenderer.material);
     }
 
     new void Revive()
@@ -81,26 +88,68 @@ public class Enemy : CharacterController
         _pathUpdateTimer = _pathUpdatePeriod;
     }
 
-    void ConfigurePathDrawer()
+    LineRenderer CreateAndConfigureLineRenderer(string objectName, Color color, float width = 0.2f)
     {
-        _lr.material = new Material(Shader.Find("Legacy Shaders/Particles/Alpha Blended Premultiply"));
-        _lr.startWidth = _lr.endWidth = 0.2f;
-        _lr.startColor = _lr.endColor = _color;
-        _lr.sortingOrder = -100;
+        var childForLR = new GameObject(objectName);
+        childForLR.transform.SetParent(transform);
+        childForLR.transform.position = transform.position;
+        childForLR.transform.rotation = transform.rotation;
+        childForLR.AddComponent<LineRenderer>();
+
+        var lr = childForLR.GetComponent<LineRenderer>();
+        ConfigureLineRenderer(lr, color, width);
+
+        return lr;
+    }
+
+    void ConfigureLineRenderer(LineRenderer lr, Color color, float width = 0.2f)
+    {
+        lr.material = new Material(Shader.Find("Legacy Shaders/Particles/Alpha Blended Premultiply"));
+        lr.startWidth = lr.endWidth = width;
+        lr.startColor = lr.endColor = color;
+        lr.sortingOrder = -100;
     }
 
     bool CheckPlayerIsVisible()
     {
-        var hitInfo = Physics2D.Raycast(
-            _gun.ShotPoint.transform.position,
-            _gun.ShotPoint.transform.up,
-            _shotDistance
-        );
+        var reflectionsCount = 0;
 
-        if (hitInfo.collider != null)
+        var position = _gun.ShotPoint.transform.position;
+        var direction = _gun.ShotPoint.transform.up;
+        var distance = _shotDistance;
+
+        _lookRenderer.positionCount = 0;
+
+        do
         {
-            return hitInfo.collider.CompareTag("Player");
-        }
+            var hitInfo = Physics2D.Raycast(
+                position,
+                direction,
+                distance
+            );
+
+            if (drawLook)
+            {
+                _lookRenderer.positionCount += 1;
+                _lookRenderer.SetPosition(reflectionsCount, position);
+            }
+
+            if (hitInfo.collider != null)
+            {
+
+                if (hitInfo.collider.CompareTag("Obstacle"))
+                {
+                    position = hitInfo.point;
+                    direction = Vector2.Reflect(direction, hitInfo.normal).normalized;
+                }
+                else if (hitInfo.collider.CompareTag("Player"))
+                {
+                    return true;
+                }
+            }
+
+            reflectionsCount++;
+        } while (reflectionsCount <= _playerCheckReflectionsCount);
 
         return false;
     }
@@ -122,10 +171,10 @@ public class Enemy : CharacterController
     {
         if (_currentPath != null && drawPath)
         {
-            _lr.positionCount = _currentPath.Length;
+            _pathRenderer.positionCount = _currentPath.Length;
             for (int i = 0; i < _currentPath.Length; i++)
             {
-                _lr.SetPosition(i, _currentPath[i]);
+                _pathRenderer.SetPosition(i, _currentPath[i]);
             }
         }
     }
@@ -165,7 +214,7 @@ public class Enemy : CharacterController
 
     void Shoot()
     {
-        if (Random.Range(1, 100) < 30)
+        if (Random.Range(0, 100) < 15)
         {
             _gun.Shoot(2, 0.15f);
         }
@@ -178,5 +227,17 @@ public class Enemy : CharacterController
     public void GetShot()
     {
         Kill();
+    }
+
+    public void TogglePathTrace()
+    {
+        _pathRenderer.positionCount = 0;
+        drawPath = !drawPath;
+    }
+
+    public void ToggleLookTrace()
+    {
+        _lookRenderer.positionCount = 0;
+        drawLook = !drawLook;
     }
 }

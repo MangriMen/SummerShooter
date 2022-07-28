@@ -51,7 +51,6 @@ public class Player : CharacterController
         {
             _velocity = (transform.right * Input.GetAxisRaw("Vertical")) + (transform.up * GetSidewayMovementDirection());
             _velocity = _velocity.normalized * _speed;
-            // _velocity = new Vector2( Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 
             moveSidewaysCheckTimer = moveSidewaysCheckDelay;
         }
@@ -59,6 +58,11 @@ public class Player : CharacterController
         if (moveForwardCheckTimer > 0)
         {
             moveForwardCheckTimer -= Time.deltaTime;
+        }
+
+        if (moveSidewaysCheckTimer > 0)
+        {
+            moveSidewaysCheckTimer -= Time.deltaTime;
         }
 
         if (rotationCheckTimer > 0)
@@ -100,6 +104,10 @@ public class Player : CharacterController
     void CheckAction()
     {
         if (moveForwardCheckTimer > 0 && rotationCheckTimer > 0 && shotCheckTimer > 0)
+        {
+            AppendAction("Movement, rotation and double shot");
+        }
+        else if (moveForwardCheckTimer > 0 && rotationCheckTimer > 0)
         {
             AppendAction("Movement, rotation and shot");
         }
